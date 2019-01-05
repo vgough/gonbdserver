@@ -1,8 +1,9 @@
 package nbd
 
 import (
-	"golang.org/x/net/context"
 	"os"
+
+	"golang.org/x/net/context"
 )
 
 // FileBackend implements Backend

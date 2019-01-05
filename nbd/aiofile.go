@@ -8,9 +8,10 @@
 package nbd
 
 import (
+	"os"
+
 	"github.com/traetox/goaio"
 	"golang.org/x/net/context"
-	"os"
 )
 
 // AioFileBackend implements Backend
@@ -24,11 +25,11 @@ func (afb *AioFileBackend) WriteAt(ctx context.Context, b []byte, offset int64, 
 	if err := afb.aio.Wait(); err != nil {
 		return 0, err
 	}
-	requestId, err := afb.aio.WriteAt(b, offset)
+	requestID, err := afb.aio.WriteAt(b, offset)
 	if err != nil {
 		return 0, err
 	}
-	n, err := afb.aio.WaitFor(requestId)
+	n, err := afb.aio.WaitFor(requestID)
 	if err != nil {
 		return 0, err
 	}
@@ -45,11 +46,11 @@ func (afb *AioFileBackend) ReadAt(ctx context.Context, b []byte, offset int64) (
 	if err := afb.aio.Wait(); err != nil {
 		return 0, err
 	}
-	requestId, err := afb.aio.ReadAt(b, offset)
+	requestID, err := afb.aio.ReadAt(b, offset)
 	if err != nil {
 		return 0, err
 	}
-	n, err := afb.aio.WaitFor(requestId)
+	n, err := afb.aio.WaitFor(requestID)
 	if err != nil {
 		return 0, err
 	}
@@ -71,22 +72,22 @@ func (afb *AioFileBackend) Close(ctx context.Context) error {
 	return afb.aio.Close()
 }
 
-// Size implements Backend.Size
+// Geometry implements Backend.
 func (afb *AioFileBackend) Geometry(ctx context.Context) (uint64, uint64, uint64, uint64, error) {
 	return afb.size, 1, 32 * 1024, 128 * 1024 * 1024, nil
 }
 
-// Size implements Backend.HasFua
+// HasFua implements Backend.
 func (afb *AioFileBackend) HasFua(ctx context.Context) bool {
 	return false
 }
 
-// Size implements Backend.HasFua
+// HasFlush implements Backend.
 func (afb *AioFileBackend) HasFlush(ctx context.Context) bool {
 	return false
 }
 
-// Generate a new aio backend
+// NewAioFileBackend generates a new aio backend
 func NewAioFileBackend(ctx context.Context, ec *ExportConfig) (Backend, error) {
 	perms := os.O_RDWR
 	if ec.ReadOnly {

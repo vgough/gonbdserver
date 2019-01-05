@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"golang.org/x/net/context"
 	"io"
 	"log"
 	"net"
@@ -14,6 +13,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"golang.org/x/net/context"
 )
 
 // Default number of workers
@@ -795,7 +796,7 @@ func (c *Connection) Negotiate(ctx context.Context) error {
 
 			// Next find our export
 			ec, err := c.getExportConfig(ctx, string(name))
-			if err != nil || (ec.TlsOnly && c.tlsConn == nil) {
+			if err != nil || (ec.TLSOnly && c.tlsConn == nil) {
 				if opt.NbdOptId == NBD_OPT_EXPORT_NAME {
 					// we have to just abort here
 					if err != nil {
@@ -1143,7 +1144,7 @@ func (c *Connection) connectExport(ctx context.Context, ec *ExportConfig) (*Expo
 				name:               ec.Name,
 				readonly:           ec.ReadOnly,
 				workers:            ec.Workers,
-				tlsonly:            ec.TlsOnly,
+				tlsonly:            ec.TLSOnly,
 				description:        ec.Description,
 				minimumBlockSize:   minimumBlockSize,
 				preferredBlockSize: preferredBlockSize,

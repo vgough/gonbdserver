@@ -5,7 +5,6 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"golang.org/x/net/context"
 	"io/ioutil"
 	"log"
 	"net"
@@ -13,21 +12,23 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"golang.org/x/net/context"
 )
 
-// A single listener on a given net.Conn address
+// Listener listens on a given net.Conn address
 type Listener struct {
 	logger          *log.Logger    // a logger
 	protocol        string         // the protocol we are listening on
 	addr            string         // the address
 	exports         []ExportConfig // a list of export configurations associated
 	defaultExport   string         // name of default export
-	tls             TlsConfig      // the TLS configuration
+	tls             TLSConfig      // the TLS configuration
 	tlsconfig       *tls.Config    // the TLS configuration
 	disableNoZeroes bool           // disable the 'no zeroes' extension
 }
 
-// An listener type that does what we want
+// DeadlineListener is a listener that has a deadline.
 type DeadlineListener interface {
 	SetDeadline(t time.Time) error
 	net.Listener
@@ -180,7 +181,7 @@ func NewListener(logger *log.Logger, s ServerConfig) (*Listener, error) {
 		exports:         s.Exports,
 		defaultExport:   s.DefaultExport,
 		disableNoZeroes: s.DisableNoZeroes,
-		tls:             s.Tls,
+		tls:             s.TLS,
 	}
 	if err := l.initTls(); err != nil {
 		return nil, err
