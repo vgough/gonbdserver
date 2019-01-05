@@ -1,15 +1,13 @@
-// +build linux,!noceph
+// +build ceph
 
-// The above build tag specifies this file is only to be built on linux (because
-// building librados is difficult elsewhere). If you want it to build elsewhere,
-// add your OS as appropriately. If you are having difficulty building on linux
-// or want to build without librados present, then use
-//    go build -tags 'noceph'
+// If you want to build with librados, then use
+//    go build -tags 'ceph'
 
 package nbd
 
 import (
 	"fmt"
+
 	"github.com/ceph/go-ceph/rados"
 	"github.com/ceph/go-ceph/rbd"
 	"golang.org/x/net/context"
